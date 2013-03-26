@@ -34,9 +34,14 @@ it is a problem that has a simple to asses entry point that also allows
 for an extension to almost arbitrary complexity with interesting problems
 arising at every point along the way.
 
+Broader Impacts:
 The iconic web-slinging super hero has been seen
 by innumerable people world round, but as of yet there hass been no real
 quantitative investigation into his abilities. The one attempt that was
-made by Emory professor
+made by Emory professor Skip Garibaldi has recieved a huge amount of press
+coverage. Additionally, this could have potentially large rammifications
+within the physics education space, encouraging students at the level of
+high school and above to thouroughly investigate higher level physics as a 
+tool for the investigation of their childhood superheroes.
 
 
