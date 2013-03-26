@@ -25,6 +25,18 @@ as well as the controls algorithms that tie directly into his research on combin
 fuel cycles. Also very interesed in materials science and failure analysis. 
 Took material science freshman year and NINJA'd stuff second semester.
 
+Intellectual Impact:
+This is a system that would seem simple at first, but upon closer 
+inspection it quickly becomes an intricate mechanical problem. This problem
+also is a great illustration of a number of simple systems coming together
+to form a system that quickly becomes extremely complex. Additionally,
+it is a problem that has a simple to asses entry point that also allows
+for an extension to almost arbitrary complexity with interesting problems
+arising at every point along the way.
 
+The iconic web-slinging super hero has been seen
+by innumerable people world round, but as of yet there hass been no real
+quantitative investigation into his abilities. The one attempt that was
+made by Emory professor
 
 
