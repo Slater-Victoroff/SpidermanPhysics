@@ -1,0 +1,16 @@
+Overall Goal:
+We want to determine the feasibility of Spiderman's notorious web-slinging abilities.
+We would like to examine this both from a materials persepctive, considering
+the strength of the web he uses, and from the physical perspective of swinging
+from an elastic pendulum while firing mass in the opposite direction to motion.
+We also want to determine the ideal pendulum or web-slinging strategy for 
+spiderman to travel at top speed through a city street.
+
+Specific objectives:
+We want to accurately model spiderman's webslinging through an idealized
+environment consisting of two infinite walls on either side of a street with 
+a fixed width and infinite length. Initially we will consider the webs
+to be simple springs and seek mainly to discover what the material limitations 
+on his web are as far as strength, spring constant, and strength. We would then
+like to do a regression testing using a bevy of assorted controls algorithms
+to attempt to arrive at an ideal strategy for traversal.
