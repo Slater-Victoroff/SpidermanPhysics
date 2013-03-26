@@ -14,3 +14,17 @@ to be simple springs and seek mainly to discover what the material limitations
 on his web are as far as strength, spring constant, and strength. We would then
 like to do a regression testing using a bevy of assorted controls algorithms
 to attempt to arrive at an ideal strategy for traversal.
+
+Educational significance:
+Abe: Very interested in the materials science part of this assignment, 
+as well as generally developing a better understanding of the modelling
+of physical system in a rigorous way. Currently enrolled in Stuff of History, 
+and wants to develop a better understanding of tensile and stress properties.
+Slater: Very interesting the machine learning portion of the regression testing,
+as well as the controls algorithms that tie directly into his research on combined
+fuel cycles. Also very interesed in materials science and failure analysis. 
+Took material science freshman year and NINJA'd stuff second semester.
+
+
+
+
