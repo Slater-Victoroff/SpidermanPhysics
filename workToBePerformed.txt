@@ -8,11 +8,11 @@ in our project, but the additionally are very comprehensive and should give an o
 wide enough to properly get us up to speed on the current state of this branch of physics.
 
 2. For pre-existing data we intend to use the data sets on spider silk present in both
-Vollrath(2000) and $(That One paper you showed me with the spreadsheet of silk strengths)$
-As far as the data for the elastic pendulum goes we will attempt to put together a basic 
-experimental setup to ensure that we have the basic physics accurately modelled. 
-Past this basic level of verification however it will be difficult to compare our model
-with existing data beyond our own intuitions due to the novel nature of the work.
-We will compare our results to the countless representations of our work throughout 
-popular media, however these representations do not make for an accurate representation
+Vollrath(2000) and Agnarsson(2010). As far as the data for the elastic pendulum goes
+we will attempt to put together a basic experimental setup to ensure that we have the
+basic physics accurately modelled. Past this basic level of verification however it will
+be difficult to compare our model with existing data beyond our own intuitions due to the
+novel nature of the work. We will compare our results to the countless representations of
+our work throughout popular media, however these representations do not make for an 
+accurate representation
 of reality.
