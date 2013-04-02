@@ -16,3 +16,13 @@ novel nature of the work. We will compare our results to the countless represent
 our work throughout popular media, however these representations do not make for an 
 accurate representation
 of reality.
+
+3. We are planning on using numpy for the simulations themselves as well as openopt for
+the optimization portion of our project. These are python libraries designed for fast
+numerical calculation and fast nonlinear optimization respectively.
+
+4. See 2.
+
+5. Before the official start of the project:
+       We will familiarize ourselves with models of elastic pendulums.
+   
