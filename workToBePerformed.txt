@@ -1,0 +1,18 @@
+1. As far as pre-existing work goes we originally investigated the work done by Emory
+professor Skip Garibaldi, but upon further contact it appears that his work will not
+be extremely useful to us. Instead we're looking to base our work on the previous work
+done on elastic pendulums by A.H.P. van der Burgh(1975) and Vetyukov(2004). Additionally
+we will base our treatment of spiderweb's material properties on Vollrath(2000). These are
+appropriate resource because not only to they directly deal with the technical areas
+in our project, but the additionally are very comprehensive and should give an overview 
+wide enough to properly get us up to speed on the current state of this branch of physics.
+
+2. For pre-existing data we intend to use the data sets on spider silk present in both
+Vollrath(2000) and $(That One paper you showed me with the spreadsheet of silk strengths)$
+As far as the data for the elastic pendulum goes we will attempt to put together a basic 
+experimental setup to ensure that we have the basic physics accurately modelled. 
+Past this basic level of verification however it will be difficult to compare our model
+with existing data beyond our own intuitions due to the novel nature of the work.
+We will compare our results to the countless representations of our work throughout 
+popular media, however these representations do not make for an accurate representation
+of reality.
