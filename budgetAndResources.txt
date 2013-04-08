@@ -8,3 +8,5 @@ Additionally we intend to uise the openopt library for python in order to
 solve any non-linear differential equations we happen across in our studies
 These are bound to occur, and rather than getting a purely analytical and exact
 solution we many have to settle for a numerical optimization in some cases.
+
+2. We don't expect needing any additional equipment for the completion of this project beyond those listed above. If anything else pops up, we assume that we can get the materials required for any specific mechanical experimentation from around Olin without any additional cost.
