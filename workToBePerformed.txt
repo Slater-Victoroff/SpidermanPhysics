@@ -24,7 +24,7 @@ use vpython for visualizations of our simulations.
 
 4. See 2.
 
-5. Before the official start of the project (Aoril 19):
+5. Before the official start of the project (April 19):
        We will familiarize ourselves with models of elastic pendulums.
    During Week 1 of the project:
        Over the weekend (April 19-April 23) we will approach an analytical and a numerical
