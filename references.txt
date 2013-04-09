@@ -4,13 +4,12 @@ J. Gerstmayr, H. Irschik, Vibrations of the elasto-plastic pendulum, Internation
 
 A. M. F. Moore and K. Tran, “Material properties of cobweb silk from the black widow spider Latrodectus hesperus,” International Journal of Biological Macromolecules, vol. 24, no. 2–3, pp. 277–282, Mar. 1999.
 
+Peter Lynch, Resonant motions of the three-dimensional elastic pendulum, International Journal of Non-Linear Mechanics, Volume 37, Issue 2, March 2002, Pages 345-367, ISSN 0020-7462, 10.1016/S0020-7462(00)00121-9.
+
 J.M. Tuwankotta, G.R.W. Quispel, Geometric numerical integration applied to the elastic pendulum at higher-order resonance, Journal of Computational and Applied Mathematics, Volume 154, Issue 1, 1 May 2003, Pages 229-242, ISSN 0377-0427, 10.1016/S0377-0427(02)00825-7.
 
 F. Vollrath, “Strength and structure of spiders’ silks,” Reviews in Molecular Biotechnology, vol. 74, no. 2, pp. 67–83, Aug. 2000.
 
 F. Vollrath, “Spider Silk: Thousands of Nano-Filaments and Dollops of Sticky Glue,” Current Biology, vol. 16, no. 21, pp. R925–R927, Nov. 2006.
 
-
-Peter Lynch, Resonant motions of the three-dimensional elastic pendulum, International Journal of Non-Linear Mechanics, Volume 37, Issue 2, March 2002, Pages 345-367, ISSN 0020-7462, 10.1016/S0020-7462(00)00121-9.
-
-
+F. Vollrath and T. Kohler, “Mechanics of Silk Produced by Loaded Spiders,” Proceedings: Biological Sciences, vol. 263, no. 1369, pp. 387–391, Apr. 1996.
