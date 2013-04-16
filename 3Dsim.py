@@ -1,3 +1,4 @@
+from __future__ import division
 from visual import *
 import numpy as np
 from numpy import linalg as la
@@ -18,7 +19,11 @@ def spodes(t, v, p):
     r = v[0:3]
     v = v[3:]
     drdt = v
-    dvdt = p.g + r*p.k*(p.eq/la.norm(r) - 1)
+    d = la.norm(r) - p.eq
+    #If the sim is a stretchy string
+    if d < 0:
+        d = 0
+    dvdt = p.g - d*p.k*(r/la.norm(r))
     out = np.concatenate((drdt, dvdt))
     return out
 
@@ -29,7 +34,11 @@ def visualize(vals, p):
     rod.axis=r
     ball.pos=r
     # Printing the current total energy
-    print p.m/2 * la.norm(v)**2 + p.k/2*(la.norm(r)-p.eq)**2 - p.m * np.dot(p.g,r)
+    #E = p.m/2 * la.norm(v)**2 + p.k/2*(la.norm(r)-p.eq)**2 - p.m * np.dot(p.g,r)
+    E = p.m/2 * la.norm(v)**2 - p.m * np.dot(p.g,r)
+    if la.norm(r)-p.eq > 0:
+        E += p.k/2*(la.norm(r)-p.eq)**2
+    print E
 
 #Instantiating the parameters
 params = Params()
