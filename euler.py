@@ -1,7 +1,3 @@
-from __future__ import division
-import numpy as np
-from numpy import linalg as la
-
 def euler(inlist, iterfunc, exitfunc=(lambda vals: True),\
           exittime=float('infinity'), dt=0.01):
     """ This function takes a tuple of initial conditions and a function
