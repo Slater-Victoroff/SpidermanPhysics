@@ -5,8 +5,7 @@ from numpy import linalg as la
 from scipy.integrate import ode
 from euler import euler
 from time import clock, sleep
-from scipy.optimize import fmin
-from openopt import NLP
+from scipy.optimize import minimize
 
 import math
 
@@ -54,9 +53,9 @@ def minimizeWebEnergyLost(x, parameters):
     arcsinhTerm = lambda values: np.arcsinh((parameters.gravity * x) / (2 * values[1]**2 * np.cos(values[0])**2))
     costFunction = lambda values: firstTerm(values)*sqrtTerm(values)+secondTerm(values)*arcsinhTerm(values)
     bounds = ((-math.pi/2,math.pi/2),(0,parameters.maxSlingSpeed))
-    return costFunction
-    #minimum = fmin(costFunction, method="SLSQP", bounds = bounds)
-    #return minimum
+    #return costFunction
+    minimum = minimize(costFunction, (pi/4, 20), method="SLSQP", bounds=bounds)
+    return minimum
 
 
 def fireWeb(direction, parameters):
