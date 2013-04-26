@@ -6,6 +6,7 @@ from scipy.integrate import ode
 from euler import euler
 from time import clock, sleep
 from scipy.optimize import minimize
+from scipy.optimize import fmin_slsqp
 
 import math
 
@@ -16,12 +17,14 @@ negative q2 direction. Other two axes are arbitrary as far as I can tell"""
 class Params(object):
     def __init__(self):
         self.equilibriumLength = 1 #m
-        self.mass = 1 #kg
+        self.mass = 50 #kg
         self.k = 100 #N/m
         self.gravity = np.array((0,-9.81,0)) #m/s^2
         self.slingTime = 10 #In whatever units event time are in. I assume seconds
-        self.webDensity = 0.01 #kg/m Assuming a constant thickness for web
+        self.webDensity = 0.0001 #kg/m Assuming a constant thickness for web
         self.maxSlingSpeed = 1000 #m/s
+        self.heightChange = 0; 
+        self.distanceToWall = 100;
 
 def normalSpring(t, v, parameters):
     r = v[0:3] 
@@ -48,13 +51,17 @@ def tensionSpring(t, v, parameters):
 def minimizeWebEnergyLost(x, parameters):
     """values = [theta, velocity]"""
     firstTerm = lambda values: (x * values[1]**2 / 2.0)
-    sqrtTerm = lambda values: np.sqrt((parameters.gravity**2 * x**2) / (4 * values[1]**4 * np.cos(values[0])**4) + 1)
-    secondTerm = lambda values: (values[1]**4 * np.cos(values[0])**2) / parameters.gravity
-    arcsinhTerm = lambda values: np.arcsinh((parameters.gravity * x) / (2 * values[1]**2 * np.cos(values[0])**2))
+    sqrtTerm = lambda values: np.sqrt((parameters.gravity[1]**2 * x**2) / (4 * values[1]**4 * np.cos(values[0])**4) + 1)
+    secondTerm = lambda values: (values[1]**4 * np.cos(values[0])**2) / parameters.gravity[1]
+    arcsinhTerm = lambda values: np.arcsinh((parameters.gravity[1] * x) / (2 * values[1]**2 * np.cos(values[0])**2))
     costFunction = lambda values: firstTerm(values)*sqrtTerm(values)+secondTerm(values)*arcsinhTerm(values)
-    bounds = ((-math.pi/2,math.pi/2),(0,parameters.maxSlingSpeed))
+    bounds = ((0,(math.pi/2.0)),(parameters.distanceToWall,parameters.maxSlingSpeed))
+
+    leftTerm = lambda values: ((-parameters.gravity[1]/2)*parameters.distanceToWall**2)/((values[1]**2)*(math.cos(values[0])))
+    fullConstraint = lambda values: leftTerm(values)+(math.tan(0)*parameters.distanceToWall)-parameters.heightChange
+    cons = ({'type': 'eq', 'fun': lambda values: fullConstraint(values)})
     #return costFunction
-    minimum = minimize(costFunction, (pi/4, 20), method="SLSQP", bounds=bounds)
+    minimum = minimize(costFunction, (pi/4, 100), method="SLSQP", bounds=bounds, constraints=cons)
     return minimum
 
 
