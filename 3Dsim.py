@@ -55,11 +55,12 @@ def minimizeWebEnergyLost(x, parameters):
     secondTerm = lambda values: (values[1]**4 * np.cos(values[0])**2) / parameters.gravity[1]
     arcsinhTerm = lambda values: np.arcsinh((parameters.gravity[1] * x) / (2 * values[1]**2 * np.cos(values[0])**2))
     costFunction = lambda values: firstTerm(values)*sqrtTerm(values)+secondTerm(values)*arcsinhTerm(values)
-    bounds = ((0,(math.pi/2.0)),(parameters.distanceToWall,parameters.maxSlingSpeed))
+    bounds = ((0,(math.pi/2.0)),(0,parameters.maxSlingSpeed))
 
     leftTerm = lambda values: ((-parameters.gravity[1]/2)*parameters.distanceToWall**2)/((values[1]**2)*(math.cos(values[0])))
     fullConstraint = lambda values: leftTerm(values)+(math.tan(0)*parameters.distanceToWall)-parameters.heightChange
     cons = ({'type': 'eq', 'fun': lambda values: fullConstraint(values)})
+    #ineq means not equals to zero. eq is equal to zero
     #return costFunction
     minimum = minimize(costFunction, (pi/4, 100), method="SLSQP", bounds=bounds, constraints=cons)
     return minimum
