@@ -31,7 +31,9 @@ def websling(v0, r0, where, when, iterations):
     for i in xrange(0, iterations):
         (r0[i], l) = where(v0[i], rGlobal[i], params)
         params.equilibriumLength = l
-        v0[i+1],rf = 3Dsim.run(v0, r[0], when, params)
+        outvec = 3Dsim.switchingSpring(np.array(r[0]+v0[i]),
+                                           params, when)
+        rf, v0[i+1] = outvec[:3], outvec[3:]
         rGlobal[i+1] = rGlobal[i] - r0[i] + rf
     # Call the swing function here
 
@@ -43,6 +45,17 @@ def simplewhere(v, r, params)
     r[0] = (params.streetWidth if params.left else 0)
     params.left = not params.left
     return r, r * 1.1
+
+def simplewhen(vec, params):
+    r, v = vec[:3], vec[3:]
+    if params.left:
+        ang = np.arctan(r[2]/r[0])
+    else:
+        ang = np.arctan(r[2]/(params.streetWidth - r[0]))
+    if ang > (np.pi / 6):
+        return False
+    else:
+        return True
 
 if __name__ == '__main__':
     print 'sup'
