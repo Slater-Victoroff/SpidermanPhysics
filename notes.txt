@@ -1,5 +1,0 @@
-Infinite walls on either side of a fixed height.
-
-Consider street width, building height, web variables. 
-
-Start with web, figure out the capacity
