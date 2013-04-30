@@ -3,7 +3,6 @@ from visual import *
 import numpy as np
 from numpy import linalg as la
 from scipy.integrate import ode
-from euler import euler
 from time import clock, sleep
 from scipy.optimize import minimize
 from scipy.optimize import fmin_slsqp
@@ -12,25 +11,12 @@ import math
 
 #Some parameters for the simulation - this way, they only get defined once
 
-"""Gravity acts along y which is parameters 1, width of street is along x (first axis), 
+"""Gravity acts along y which is parameters 1, width of street is along x (first axis),
 and going down the street is along the z (third) axis"""
-class Params(object):
-    def __init__(self):
-        self.equilibriumLength = 1 #m
-        self.mass = 50 #kg
-        self.k = 100 #N/m
-        self.gravity = np.array((0,-9.81,0)) #m/s^2
-        self.streetWidth = 20;
-        self.airDensity = 1.2 #kg/m^3
-        self.area = 0.5 #m^2
-        self.terminalVelocity = 70 #m/s
-        self.dragCoefficient = 1.0/((self.density*self.area)*(self.terminalVelocity**2/(2*self.mass*self.gravity)))
-        self.dt = 0.01
-
 def normalSpring(t, v, parameters):
-    r = v[0:3] 
+    r = v[0:3]
     velocity = v[3:]
-    drdt = velocity 
+    drdt = velocity
     d = la.norm(r) - parameters.equilibriumLength
     dvdt = parameters.gravity - d*parameters.k*(r/la.norm(r))
     out = np.concatenate((drdt, dvdt))
@@ -38,9 +24,9 @@ def normalSpring(t, v, parameters):
 
 # The function that implements the spring pendulum odes
 def tensionSpring(t, v, parameters):
-    r = v[0:3] 
+    r = v[0:3]
     velocity = v[3:]
-    drdt = velocity 
+    drdt = velocity
     d = la.norm(r) - parameters.equilibriumLength
     #If the sim is a stretchy string
     if d < 0:
@@ -49,26 +35,31 @@ def tensionSpring(t, v, parameters):
     out = np.concatenate((drdt, dvdt))
     return out
 
-def switchingSping(t, v, parameters, slingingRule):
+def switchingSpring(t, v, parameters, slingingRule):
     """Assumes that slingingRule is a lambda function that takes in
     the parameters object and evaluates to zero when spiderman should
     send out a new web."""
     switcher = (lambda t, v: switchingIteration(t, v,parameters, slingingRule))
     sim = ode(switchingIteration).set_integrator('dopri5')
     sim.set_initial_value(v,t)
-    while sim.successful():
+    print sim.successful()
+    while True:
+        print 'supFirst'
         try:
-            sim.integrate(sim.t+dt)
+            print 'sup'
+            sim.integrate(sim.t+parameters.dt)
+            print 'supAgain'
         except Exception as finish:
+            print 'supExcept'
             return finish.args
 
 
 def switchingIteration(t, v, parameters, slingingRule):
-    if (!slingingRule(v, parameters)):
+    if (not slingingRule(v, parameters)):
         raise Exception(t, v)
-    r = v[0:3] 
+    r = v[0:3]
     velocity = v[3:]
-    drdt = velocity 
+    drdt = velocity
     d = la.norm(r) - parameters.equilibriumLength
     #If the sim is a stretchy string
     if d < 0:
@@ -116,26 +107,6 @@ def visualize(vals, parameters):
     print E
 
 #Instantiating the parameters
-params = Params()
 
-print minimizeWebEnergyLost(20, params)
-# normal = (lambda t,v: normalSpring(t,v,params))
-
-#Defining sp as a function only of t and v
- tension = (lambda t,v: tensionSpring(t,v,params))
-
-#Setting up the vpython stuff
- rod = cylinder(pos=(0,0,0), axis=(1,0,0), radius=0.05)
- ball = sphere(pos=(1,0,0), radius = 0.1)
-
- #creating the sim object, dopri5 is basically ode45
- sim = ode(tension).set_integrator('dopri5')
- sim.set_initial_value([1,0,0,0,0,0],0)
- endtime = 20
- dt = 0.01
-
-#This follows the form of the example on the scipy site
- while sim.successful() and sim.t < endtime:
-     sim.integrate(sim.t+dt)
-     sleep(dt)
-     visualize(sim.y, params)
+#rod = cylinder(pos=(0,0,0), axis=(1,0,0), radius=0.05)
+#ball = sphere(pos=(1,0,0), radius = 0.1)
