@@ -25,6 +25,7 @@ class Params(object):
         self.area = 0.5 #m^2
         self.terminalVelocity = 70 #m/s
         self.dragCoefficient = 1.0/((self.density*self.area)*(self.terminalVelocity**2/(2*self.mass*self.gravity)))
+        self.dt = 0.01
 
 def normalSpring(t, v, parameters):
     r = v[0:3] 
@@ -52,14 +53,29 @@ def switchingSping(t, v, parameters, slingingRule):
     """Assumes that slingingRule is a lambda function that takes in
     the parameters object and evaluates to zero when spiderman should
     send out a new web."""
-    if slingingRule(parameters) != 0:
-        r = v[0:3]
-        velocity = v[3:]
-        drdt = velocity
-        d = la.norm(r) - parameters.equilibriumLength
-        if d<0:
-            d=0
-        dvdt = parameters.gravity - d*parameters.k(r/la.norm(r))
+    switcher = (lambda t, v: switchingIteration(t, v,parameters, slingingRule))
+    sim = ode(switchingIteration).set_integrator('dopri5')
+    sim.set_initial_value(v,t)
+    while sim.successful():
+        try:
+            sim.integrate(sim.t+dt)
+        except Exception as finish:
+            return finish.args
+
+
+def switchingIteration(t, v, parameters, slingingRule):
+    if (!slingingRule(v, parameters)):
+        raise Exception(t, v)
+    r = v[0:3] 
+    velocity = v[3:]
+    drdt = velocity 
+    d = la.norm(r) - parameters.equilibriumLength
+    #If the sim is a stretchy string
+    if d < 0:
+        d = 0
+    dvdt = parameters.gravity - d*parameters.k*(r/la.norm(r))
+    out = np.concatenate((drdt, dvdt))
+    return out
 
 
 
