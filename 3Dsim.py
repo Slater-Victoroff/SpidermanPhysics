@@ -12,19 +12,19 @@ import math
 
 #Some parameters for the simulation - this way, they only get defined once
 
-"""Worth noting that in the coordinate system here gravity is assumed to be in the
-negative q2 direction. Other two axes are arbitrary as far as I can tell"""
+"""Gravity acts along y which is parameters 1, width of street is along x (first axis), 
+and going down the street is along the z (third) axis"""
 class Params(object):
     def __init__(self):
         self.equilibriumLength = 1 #m
         self.mass = 50 #kg
         self.k = 100 #N/m
         self.gravity = np.array((0,-9.81,0)) #m/s^2
-        self.slingTime = 10 #In whatever units event time are in. I assume seconds
-        self.webDensity = 0.0001 #kg/m Assuming a constant thickness for web
-        self.maxSlingSpeed = 1000 #m/s
-        self.heightChange = 0; 
-        self.distanceToWall = 100;
+        self.streetWidth = 20;
+        self.airDensity = 1.2 #kg/m^3
+        self.area = 0.5 #m^2
+        self.terminalVelocity = 70 #m/s
+        self.dragCoefficient = 1.0/((self.density*self.area)*(self.terminalVelocity**2/(2*self.mass*self.gravity)))
 
 def normalSpring(t, v, parameters):
     r = v[0:3] 
@@ -47,6 +47,21 @@ def tensionSpring(t, v, parameters):
     dvdt = parameters.gravity - d*parameters.k*(r/la.norm(r))
     out = np.concatenate((drdt, dvdt))
     return out
+
+def switchingSping(t, v, parameters, slingingRule):
+    """Assumes that slingingRule is a lambda function that takes in
+    the parameters object and evaluates to zero when spiderman should
+    send out a new web."""
+    if slingingRule(parameters) != 0:
+        r = v[0:3]
+        velocity = v[3:]
+        drdt = velocity
+        d = la.norm(r) - parameters.equilibriumLength
+        if d<0:
+            d=0
+        dvdt = parameters.gravity - d*parameters.k(r/la.norm(r))
+
+
 
 def minimizeWebEnergyLost(x, parameters):
     """values = [theta, velocity]"""
@@ -90,21 +105,21 @@ params = Params()
 print minimizeWebEnergyLost(20, params)
 # normal = (lambda t,v: normalSpring(t,v,params))
 
-# #Defining sp as a function only of t and v
-# tension = (lambda t,v: tensionSpring(t,v,params))
+#Defining sp as a function only of t and v
+ tension = (lambda t,v: tensionSpring(t,v,params))
 
-# #Setting up the vpython stuff
-# rod = cylinder(pos=(0,0,0), axis=(1,0,0), radius=0.05)
-# ball = sphere(pos=(1,0,0), radius = 0.1)
+#Setting up the vpython stuff
+ rod = cylinder(pos=(0,0,0), axis=(1,0,0), radius=0.05)
+ ball = sphere(pos=(1,0,0), radius = 0.1)
 
-# # creating the sim object, dopri5 is basically ode45
-# sim = ode(tension).set_integrator('dopri5')
-# sim.set_initial_value([1,0,0,0,0,0],0)
-# endtime = 20
-# dt = 0.01
+ #creating the sim object, dopri5 is basically ode45
+ sim = ode(tension).set_integrator('dopri5')
+ sim.set_initial_value([1,0,0,0,0,0],0)
+ endtime = 20
+ dt = 0.01
 
-# #This follows the form of the example on the scipy site
-# while sim.successful() and sim.t < endtime:
-#     sim.integrate(sim.t+dt)
-#     sleep(dt)
-#     visualize(sim.y, params)
+#This follows the form of the example on the scipy site
+ while sim.successful() and sim.t < endtime:
+     sim.integrate(sim.t+dt)
+     sleep(dt)
+     visualize(sim.y, params)
