@@ -35,7 +35,6 @@ def websling(r0, v0, where, when, iterations):
     r0 = []
     t = 0
     for i in xrange(0, iterations):
-        print'started'
         (r0new, l) = where(v0[i], rGlobal[i], params)
         r0.append(r0new)
         params.equilibriumLength = l
@@ -44,23 +43,24 @@ def websling(r0, v0, where, when, iterations):
         rf, v0new = outvec[:3], outvec[3:]
         v0.append(v0new)
         rGlobal.append(rGlobal[i] - r0[i] + rf)
-        print 'done'
+        params.left = not params.left
+    print rGlobal, v0
 
 def simplewhere(v, r, params):
     """simple implementation of a where function. It always chooses
     to shoot 10m forward and 10m up, and sends out 1.1 times the
     radius of web."""
-    r = r + np.array([0,10,10])
-    r[0] = (params.streetWidth if params.left else 0)
-    params.left = not params.left
-    return -r, la.norm(r) * 1.1
+    #rnew is spiderman's position in terms of the web
+    rnew = np.array([0,-10,-10], dtype=np.float)
+    rnew[0] = (r[0] - params.streetWidth if not params.left else r[0])
+    return rnew, la.norm(rnew) * 1.1
 
 def simplewhen(vec, params):
     r, v = vec[:3], vec[3:]
     if params.left:
         ang = np.arctan(r[2]/r[0])
     else:
-        ang = np.arctan(r[2]/(params.streetWidth - r[0]))
+        ang = np.arctan(r[2]/(-r[0]))
     if ang > (np.pi / 6):
         return False
     else:

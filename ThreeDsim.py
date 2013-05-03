@@ -40,11 +40,11 @@ def switchingSpring(t, v, parameters, slingingRule):
     switcher = (lambda t, v: switchingIteration(t, v, parameters, slingingRule))
     sim = ode(switcher).set_integrator('dopri5')
     sim.set_initial_value(v,t)
-    sim.integrate(0.1)
     while sim.successful():
         try:
             sim.integrate(sim.t+parameters.dt)
         except Exception as finish:
+            print 'Exception Caught'
             return finish.args
 
 
