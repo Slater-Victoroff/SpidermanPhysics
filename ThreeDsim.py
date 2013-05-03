@@ -9,8 +9,6 @@ from scipy.optimize import fmin_slsqp
 
 import math
 
-#Some parameters for the simulation - this way, they only get defined once
-
 """Gravity acts along y which is parameters 1, width of street is along x (first axis),
 and going down the street is along the z (third) axis"""
 def normalSpring(t, v, parameters):
@@ -39,18 +37,14 @@ def switchingSpring(t, v, parameters, slingingRule):
     """Assumes that slingingRule is a lambda function that takes in
     the parameters object and evaluates to zero when spiderman should
     send out a new web."""
-    switcher = (lambda t, v: switchingIteration(t, v,parameters, slingingRule))
-    sim = ode(switchingIteration).set_integrator('dopri5')
+    switcher = (lambda t, v: switchingIteration(t, v, parameters, slingingRule))
+    sim = ode(switcher).set_integrator('dopri5')
     sim.set_initial_value(v,t)
-    print sim.successful()
-    while True:
-        print 'supFirst'
+    sim.integrate(0.1)
+    while sim.successful():
         try:
-            print 'sup'
             sim.integrate(sim.t+parameters.dt)
-            print 'supAgain'
         except Exception as finish:
-            print 'supExcept'
             return finish.args
 
 

@@ -13,7 +13,8 @@ class Params(object):
         self.airDensity = 1.2 #kg/m^3
         self.webDensity = 0.0001 #kg/m Assuming a constant thickness for web
         self.terminalVelocity = 70 #m/s
-        self.dragCoefficient = 1.0/((self.airDensity*self.area)*(self.terminalVelocity**2/(2*self.mass*self.gravity)))
+        #took norm of self.gravity to make coefficient scalar
+        self.dragCoefficient = 1.0/((self.airDensity*self.area)*(self.terminalVelocity**2/(2*self.mass*la.norm(self.gravity))))
         self.maxSlingSpeed = 1000 #m/s
         self.streetWidth = 20;
         self.left = True
@@ -34,15 +35,16 @@ def websling(r0, v0, where, when, iterations):
     r0 = []
     t = 0
     for i in xrange(0, iterations):
+        print'started'
         (r0new, l) = where(v0[i], rGlobal[i], params)
         r0.append(r0new)
         params.equilibriumLength = l
-        t, outvec = ThreeDsim.switchingSpring(t, np.array(r0[0]+v0[i]),
-                                              params, when)
+        t, outvec = ThreeDsim.switchingSpring(
+            t, np.concatenate((r0[i],v0[i])),params, when)
         rf, v0new = outvec[:3], outvec[3:]
         v0.append(v0new)
         rGlobal.append(rGlobal[i] - r0[i] + rf)
-    # Call the swing function here
+        print 'done'
 
 def simplewhere(v, r, params):
     """simple implementation of a where function. It always chooses
@@ -51,7 +53,7 @@ def simplewhere(v, r, params):
     r = r + np.array([0,10,10])
     r[0] = (params.streetWidth if params.left else 0)
     params.left = not params.left
-    return r, r * 1.1
+    return -r, la.norm(r) * 1.1
 
 def simplewhen(vec, params):
     r, v = vec[:3], vec[3:]
