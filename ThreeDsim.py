@@ -59,11 +59,14 @@ def switchingIteration(t, v, parameters, slingingRule):
     #If the sim is a stretchy string
     if d < 0:
         d = 0
-    dvdt = parameters.gravity - d*parameters.k*(r/la.norm(r))
+    dvdt = parameters.gravity - d*parameters.k*(r/la.norm(r)) - dragVector(velocity, parameters)
     out = np.concatenate((drdt, dvdt))
     return out
 
-
+def dragVector(velocity, parameters):
+    dragParameter = lambda x: 0.5*parameters.airDensity*(x**2)*parameters.dragCoefficient*parameters.area
+    drag = np.array([dragParameter(direction) for direction in velocity])
+    return drag
 
 def minimizeWebEnergyLost(x, parameters):
     """values = [theta, velocity]"""
