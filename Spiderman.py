@@ -34,9 +34,12 @@ def websling(r0, v0, where, when, iterations):
     v0, rGlobal = [v0], [r0]
     r0 = []
     t = 0
+    ThreeDsim.initVisualization(rGlobal, params)
     for i in xrange(0, iterations):
         (r0new, l) = where(v0[i], rGlobal[i], params)
         r0.append(r0new)
+        print rGlobal[i] - r0[i]
+        params.rod.pos = rGlobal[i] - r0[i]
         params.equilibriumLength = l
         t, outvec = ThreeDsim.switchingSpring(
             t, np.concatenate((r0[i],v0[i])),params, when)
@@ -61,10 +64,10 @@ def simplewhen(vec, params):
         ang = np.arctan(r[2]/r[0])
     else:
         ang = np.arctan(r[2]/(-r[0]))
-    if ang > (np.pi / 6):
+    if ang > (np.pi / 10):
         return False
     else:
         return True
 
 if __name__ == '__main__':
-    websling(np.array([8,0,0]),np.array([2,0,5]), simplewhere, simplewhen, 2)
+    websling(np.array([8,0,0]),np.array([2,0,5]), simplewhere, simplewhen, 5)

@@ -41,10 +41,11 @@ def switchingSpring(t, v, parameters, slingingRule):
     sim = ode(switcher).set_integrator('dopri5')
     sim.set_initial_value(v,t)
     while sim.successful():
+        rate(100)
         try:
             sim.integrate(sim.t+parameters.dt)
+            visualize(sim.y, parameters)
         except Exception as finish:
-            print 'Exception Caught'
             return finish.args
 
 
@@ -82,25 +83,24 @@ def minimizeWebEnergyLost(x, parameters):
     return minimum
 
 
-def fireWeb(direction, parameters):
-    """Feed in the parameters of the system and the direction that the web is being
-    fired in and it should return an appropriate"""
-
-
 #A function that will update the vpython sim
 def visualize(vals, parameters):
+    """Updates the vpython sim with current values"""
     r = vals[0:3]
     velocity = vals[3:]
-    rod.axis=r
-    ball.pos=r
+    parameters.rod.axis=r
+    parameters.ball.pos=parameters.rod.pos + r
     # Printing the current total energy
-    #E = p.m/2 * la.norm(v)**2 + p.k/2*(la.norm(r)-p.eq)**2 - p.m * np.dot(p.g,r)
-    E = parameters.mass/2 * la.norm(velocity)**2 - parameters.mass * np.dot(parameters.gravity,r)
+    E = parameters.mass/2 * la.norm(velocity)**2 - \
+        parameters.mass * np.dot(parameters.gravity,r)
     if la.norm(r)-parameters.equilibriumLength > 0:
         E += parameters.k/2*(la.norm(r)-parameters.equilibriumLength)**2
-    print E
 
-#Instantiating the parameters
-
-#rod = cylinder(pos=(0,0,0), axis=(1,0,0), radius=0.05)
-#ball = sphere(pos=(1,0,0), radius = 0.1)
+def initVisualization(r0, parameters):
+    """Initializes the vpython visualization"""
+    scene.forward = (0,1,0)
+    scene.range = (30,30,30)
+    scene.center = (10,0,30)
+    scene.autoscale = False
+    parameters.rod = cylinder(pos=(0,0,0), axis=(1,0,0), radius=0.05)
+    parameters.ball = sphere(pos=(1,0,0), radius = 0.1)
