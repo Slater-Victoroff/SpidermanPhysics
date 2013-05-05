@@ -8,7 +8,7 @@ negative q2 direction. Other two axes are arbitrary as far as I can tell"""
 class Params(object):
     def __init__(self):
         self.mass = 50 #kg
-        self.k = 100 #N/m
+        self.k = 1000 #N/m
         self.area = 0.5 #m^2
         self.gravity = np.array((0,-9.81,0)) #m/s^2
         self.airDensity = 1.2 #kg/m^3
@@ -60,7 +60,7 @@ def simplewhere(v, r, params):
     #rnew is spiderman's position in terms of the web
     rnew = np.array([0,-10,-10], dtype=np.float)
     rnew[0] = (r[0] - params.streetWidth if not params.left else r[0])
-    return rnew, la.norm(rnew) * 1.01
+    return rnew, la.norm(rnew) * 0.84
 
 def simplewhen(vec, params):
     r, v = vec[:3], vec[3:]
@@ -68,10 +68,10 @@ def simplewhen(vec, params):
         ang = np.arctan(r[2]/r[0])
     else:
         ang = np.arctan(r[2]/(-r[0]))
-    if ang > (np.pi / 4):
+    if ang > (np.pi / 20):
         return False
     else:
         return True
 
 if __name__ == '__main__':
-    websling(np.array([8,0,0]),np.array([2,0,5]), simplewhere, simplewhen, 1)
+    websling(np.array([12,0,0]),np.array([0,0,10]), simplewhere, simplewhen, 10)
