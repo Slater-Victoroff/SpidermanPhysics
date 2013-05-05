@@ -7,6 +7,8 @@ from time import clock, sleep
 from scipy.optimize import minimize
 from scipy.optimize import fmin_slsqp
 
+from matplotlib import pyplot
+
 import math
 
 """Gravity acts along y which is parameters 1, width of street is along x (first axis),
@@ -84,8 +86,6 @@ def minimizeWebEnergyLost(x, parameters):
     #return costFunction
     minimum = minimize(costFunction, (pi/4, 100), method="SLSQP", bounds=bounds, constraints=cons)
     return minimum
-
-
 #A function that will update the vpython sim
 def visualize(vals, parameters):
     """Updates the vpython sim with current values"""
@@ -104,6 +104,7 @@ def initVisualization(r0, parameters):
     scene.forward = (0,1,0)
     scene.range = (30,30,30)
     scene.center = (10,0,30)
-    scene.autoscale = False
+    scene.autoscale = True
     parameters.rod = cylinder(pos=(0,0,0), axis=(1,0,0), radius=0.05)
     parameters.ball = sphere(pos=(1,0,0), radius = 0.1)
+

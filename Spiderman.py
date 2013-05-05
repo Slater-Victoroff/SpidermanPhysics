@@ -70,4 +70,4 @@ def simplewhen(vec, params):
         return True
 
 if __name__ == '__main__':
-    websling(np.array([8,0,0]),np.array([2,0,5]), simplewhere, simplewhen, 5)
+    websling(np.array([8,0,0]),np.array([2,0,5]), simplewhere, simplewhen, 10)
