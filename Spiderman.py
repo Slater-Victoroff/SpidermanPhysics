@@ -1,5 +1,6 @@
 import numpy as np
 from numpy import linalg as la
+import matplotlib.pyplot as plt
 import ThreeDsim
 
 """Worth noting that in the coordinate system here gravity is assumed to be in the
@@ -19,6 +20,7 @@ class Params(object):
         self.streetWidth = 20;
         self.left = True
         self.dt = 0.01
+        self.energyTracker = []
 
 def goGetEmTiger():
     """The top-level optimization function. Currently is foiled by
@@ -47,6 +49,8 @@ def websling(r0, v0, where, when, iterations):
         v0.append(v0new)
         rGlobal.append(rGlobal[i] - r0[i] + rf)
         params.left = not params.left
+    plt.plot(params.energyTracker)
+    plt.savefig('fig.png')
     print rGlobal, v0
 
 def simplewhere(v, r, params):

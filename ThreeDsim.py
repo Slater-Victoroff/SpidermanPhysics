@@ -94,11 +94,12 @@ def visualize(vals, parameters):
     parameters.rod.axis=r
     parameters.ball.pos=parameters.rod.pos + r
     # Printing the current total energy
-    E = parameters.mass/2 * la.norm(velocity)**2 - \
-        parameters.mass * np.dot(parameters.gravity,r)
+    parameters.energyTracker.append(parameters.mass/2 * la.norm(velocity)**2 - \
+             parameters.mass * np.dot(parameters.gravity,r))
     if la.norm(r)-parameters.equilibriumLength > 0:
-        E += parameters.k/2*(la.norm(r)-parameters.equilibriumLength)**2
-
+        parameters.energyTracker[-1] += parameters.k/2*(la.norm(r)-parameters.equilibriumLength)**2
+    
+        
 def initVisualization(r0, parameters):
     """Initializes the vpython visualization"""
     scene.forward = (0,1,0)
