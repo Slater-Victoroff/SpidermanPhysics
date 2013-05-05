@@ -60,7 +60,7 @@ def simplewhere(v, r, params):
     #rnew is spiderman's position in terms of the web
     rnew = np.array([0,-10,-10], dtype=np.float)
     rnew[0] = (r[0] - params.streetWidth if not params.left else r[0])
-    return rnew, la.norm(rnew) * 1.1
+    return rnew, la.norm(rnew) * 1.01
 
 def simplewhen(vec, params):
     r, v = vec[:3], vec[3:]
@@ -68,10 +68,10 @@ def simplewhen(vec, params):
         ang = np.arctan(r[2]/r[0])
     else:
         ang = np.arctan(r[2]/(-r[0]))
-    if ang > (np.pi / 10):
+    if ang > (np.pi / 4):
         return False
     else:
         return True
 
 if __name__ == '__main__':
-    websling(np.array([8,0,0]),np.array([2,0,5]), simplewhere, simplewhen, 5)
+    websling(np.array([8,0,0]),np.array([2,0,5]), simplewhere, simplewhen, 1)
