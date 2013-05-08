@@ -61,7 +61,8 @@ def switchingIteration(t, v, parameters, slingingRule):
     #If the sim is a stretchy string
     if d < 0:
         d = 0
-    dvdt = parameters.gravity - d*parameters.k*(r/la.norm(r)) - dragVector(velocity, parameters)
+    dvdt = parameters.gravity - d*parameters.k*(r/la.norm(r))/parameters.mass - dragVector(velocity, parameters)/parameters.mass
+    #print dragVector(velocity, parameters)/parameters.mass
     out = np.concatenate((drdt, dvdt))
     return out
 
@@ -94,18 +95,19 @@ def visualize(vals, parameters):
     parameters.rod.axis=r
     parameters.ball.pos=parameters.rod.pos + r
     # Printing the current total energy
-    parameters.kinetic.append(parameters.mass/2 * la.norm(velocity)**2)
-    parameters.potential.append(parameters.mass * np.dot(parameters.gravity,r))
-    parameters.energyTracker.append(parameters.mass/2 * la.norm(velocity)**2 - \
-             parameters.mass * np.dot(parameters.gravity,r))
+    test = (parameters.mass/2 * la.norm(velocity)**2,
+            0 - parameters.mass * np.dot(parameters.gravity,r), 0)
+    parameters.energyTracker.append([parameters.mass/2 * la.norm(velocity)**2,
+             0 - parameters.mass * np.dot(parameters.gravity,parameters.rod.pos + r), 0])
     if la.norm(r)-parameters.equilibriumLength > 0:
-        parameters.energyTracker[-1] += parameters.k/2*(la.norm(r)-parameters.equilibriumLength)**2
-    
-        
+        parameters.energyTracker[-1][2] = parameters.k/2*(la.norm(r)-parameters.equilibriumLength)**2
+    parameters.energyTracker[-1].append(sum(parameters.energyTracker[-1]))
+
+
 def initVisualization(r0, parameters):
     """Initializes the vpython visualization"""
     scene.forward = (0,1,0)
-    scene.range = (30,30,30)
+    scene.range = (100,100,100)
     scene.center = (10,0,30)
     scene.autoscale = True
     parameters.rod = cylinder(pos=(0,0,0), axis=(1,0,0), radius=0.05)
