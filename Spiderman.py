@@ -3,8 +3,8 @@ from numpy import linalg as la
 import matplotlib.pyplot as plt
 import ThreeDsim
 
-"""Worth noting that in the coordinate system here gravity is assumed to be in the
-negative q2 direction. Other two axes are arbitrary as far as I can tell"""
+"""Worth noting that x is distance along the width of the street,
+y is vertical, and z is distance along the length of the street."""
 class Params(object):
     def __init__(self):
         self.mass = 50 #kg
@@ -29,7 +29,7 @@ def goGetEmTiger():
     The  Green Goblin"""
     print 'Damn you, Norman Osborn!'
 
-def websling(r0, v0, where, when, iterations):
+def websling(r0, v0, where, when, iterations, vis=False):
     """Simulates Spiderman's webslinging for the given parameters"""
     params = Params()
     # the where function takes a position and velocity in global space
@@ -38,7 +38,8 @@ def websling(r0, v0, where, when, iterations):
     v0, rGlobal = [v0], [r0]
     r0 = []
     t = 0
-    ThreeDsim.initVisualization(rGlobal, params)
+    if vis: ThreeDsim.initVisualization(rGlobal, params)
+    else: ThreeDsim.initFalseVisualization(rGlobal, params)
     for i in xrange(0, iterations):
         (r0new, l) = where(v0[i], rGlobal[i], params)
         r0.append(r0new)
@@ -46,14 +47,14 @@ def websling(r0, v0, where, when, iterations):
         params.rod.pos = rGlobal[i] - r0[i]
         params.equilibriumLength = l
         t, outvec = ThreeDsim.switchingSpring(
-            t, np.concatenate((r0[i],v0[i])),params, when)
+            t, np.concatenate((r0[i],v0[i])),params, when, vis)
         rf, v0new = outvec[:3], outvec[3:]
         v0.append(v0new)
         rGlobal.append(rGlobal[i] - r0[i] + rf)
         params.left = not params.left
     plt.plot(params.kinetic)
     plt.savefig('fig.png')
-    print rGlobal, v0, t
+    return rGlobal, v0, t
 
 def simplewhere(v, r, params):
     """simple implementation of a where function. It always chooses
@@ -76,4 +77,6 @@ def simplewhen(vec, params):
         return True
 
 if __name__ == '__main__':
-    websling(np.array([12,0,0]),np.array([0,0,10]), simplewhere, simplewhen, 10)
+    rGlobal, v0, t = websling(np.array([12,0,0]),np.array([0,0,10]), simplewhere, simplewhen, 10, vis=False)
+    print 'vavg = %f m/s' %(rGlobal[-1][2] / t)
+    quit()

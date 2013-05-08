@@ -35,7 +35,7 @@ def tensionSpring(t, v, parameters):
     out = np.concatenate((drdt, dvdt))
     return out
 
-def switchingSpring(t, v, parameters, slingingRule):
+def switchingSpring(t, v, parameters, slingingRule, vis=False):
     """Assumes that slingingRule is a lambda function that takes in
     the parameters object and evaluates to zero when spiderman should
     send out a new web."""
@@ -43,7 +43,7 @@ def switchingSpring(t, v, parameters, slingingRule):
     sim = ode(switcher).set_integrator('dopri5')
     sim.set_initial_value(v,t)
     while sim.successful():
-        rate(100)
+        if vis: rate(100)
         try:
             sim.integrate(sim.t+parameters.dt)
             visualize(sim.y, parameters)
@@ -98,7 +98,7 @@ def visualize(vals, parameters):
     test = (parameters.mass/2 * la.norm(velocity)**2,
             0 - parameters.mass * np.dot(parameters.gravity,r), 0)
     parameters.energyTracker.append([parameters.mass/2 * la.norm(velocity)**2,
-             0 - parameters.mass * np.dot(parameters.gravity,parameters.rod.pos + r), 0])
+            0 - parameters.mass * np.dot(parameters.gravity,parameters.rod.pos + r), 0])
     if la.norm(r)-parameters.equilibriumLength > 0:
         parameters.energyTracker[-1][2] = parameters.k/2*(la.norm(r)-parameters.equilibriumLength)**2
     parameters.energyTracker[-1].append(sum(parameters.energyTracker[-1]))
@@ -113,3 +113,9 @@ def initVisualization(r0, parameters):
     parameters.rod = cylinder(pos=(0,0,0), axis=(1,0,0), radius=0.05)
     parameters.ball = sphere(pos=(1,0,0), radius = 0.1)
 
+def initFalseVisualization(r0, parameters):
+    class Bunch:
+        def __init__(self, **kwds):
+            self.__dict__.update(kwds)
+    parameters.rod = Bunch(pos=(0,0,0), axis=(1,0,0), radius=0.05)
+    parameters.ball = Bunch(pos=(1,0,0), radius = 0.1)
