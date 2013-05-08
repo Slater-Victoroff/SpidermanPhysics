@@ -67,7 +67,7 @@ def switchingIteration(t, v, parameters, slingingRule):
 
 def dragVector(velocity, parameters):
     dragParameter = lambda x: 0.5*parameters.airDensity*(x**2)*parameters.dragCoefficient*parameters.area
-    drag = np.array([dragParameter(direction) for direction in velocity])
+    drag = np.array([(dragParameter(direction)/parameters.mass) for direction in velocity])
     return drag
 
 def minimizeWebEnergyLost(x, parameters):
@@ -94,6 +94,8 @@ def visualize(vals, parameters):
     parameters.rod.axis=r
     parameters.ball.pos=parameters.rod.pos + r
     # Printing the current total energy
+    parameters.kinetic.append(parameters.mass/2 * la.norm(velocity)**2)
+    parameters.potential.append(parameters.mass * np.dot(parameters.gravity,r))
     parameters.energyTracker.append(parameters.mass/2 * la.norm(velocity)**2 - \
              parameters.mass * np.dot(parameters.gravity,r))
     if la.norm(r)-parameters.equilibriumLength > 0:

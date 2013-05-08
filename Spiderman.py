@@ -21,6 +21,8 @@ class Params(object):
         self.left = True
         self.dt = 0.01
         self.energyTracker = []
+        self.kinetic = []
+        self.potential = []
 
 def goGetEmTiger():
     """The top-level optimization function. Currently is foiled by
@@ -49,9 +51,9 @@ def websling(r0, v0, where, when, iterations):
         v0.append(v0new)
         rGlobal.append(rGlobal[i] - r0[i] + rf)
         params.left = not params.left
-    plt.plot(params.energyTracker)
+    plt.plot(params.kinetic)
     plt.savefig('fig.png')
-    print rGlobal, v0
+    print rGlobal, v0, t
 
 def simplewhere(v, r, params):
     """simple implementation of a where function. It always chooses
@@ -74,4 +76,4 @@ def simplewhen(vec, params):
         return True
 
 if __name__ == '__main__':
-    websling(np.array([8,0,0]),np.array([2,0,5]), simplewhere, simplewhen, 10)
+    websling(np.array([8,0,0]),np.array([2,0,5]), simplewhere, simplewhen, 2)
