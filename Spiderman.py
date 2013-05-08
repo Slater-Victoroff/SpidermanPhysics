@@ -3,13 +3,16 @@ from numpy import linalg as la
 import matplotlib.pyplot as plt
 import ThreeDsim
 
+from PIL import Image
+
 """Worth noting that in the coordinate system here gravity is assumed to be in the
 negative q2 direction. Other two axes are arbitrary as far as I can tell"""
 class Params(object):
-    def __init__(self):
+    def __init__(self, k=1000, extension = 0.84):
         self.mass = 50 #kg
-        self.k = 1000 #N/m
+        self.k = k #N/m
         self.area = 0.5 #m^2
+        self.extension = 0.84 #Percentage of new length
         self.gravity = np.array((0,-9.81,0)) #m/s^2
         self.airDensity = 1.2 #kg/m^3
         self.webDensity = 0.0001 #kg/m Assuming a constant thickness for web
@@ -29,9 +32,9 @@ def goGetEmTiger():
     The  Green Goblin"""
     print 'Damn you, Norman Osborn!'
 
-def websling(r0, v0, where, when, iterations):
+def websling(r0, v0, where, when, iterations, k=1000, extension = 0.84):
     """Simulates Spiderman's webslinging for the given parameters"""
-    params = Params()
+    params = Params(k=k, extension=extension)
     # the where function takes a position and velocity in global space
     # and returns radius to spiderman from the new pendulum center,
     # along with the equilibrium length of that web.
@@ -51,9 +54,17 @@ def websling(r0, v0, where, when, iterations):
         v0.append(v0new)
         rGlobal.append(rGlobal[i] - r0[i] + rf)
         params.left = not params.left
-    plt.plot(params.kinetic)
-    plt.savefig('fig.png')
-    print rGlobal, v0, t
+    #plt.plot(params.energyTracker)
+    kineticEnergy = np.array([energy[0] for energy in params.energyTracker])
+    potentialEnergy = np.array([energy[1] for energy in params.energyTracker])
+    webEnergy = np.array([energy[2] for energy in params.energyTracker])
+    totalEnergy = np.array([energy[3] for energy in params.energyTracker])
+    return (potentialEnergy[0]-potentialEnergy[-1])/float(len(potentialEnergy))
+    # plt.plot(potentialEnergy, 'b-')
+    # plt.plot(kineticEnergy, 'r-')
+    # plt.plot(webEnergy, 'g-')
+    # plt.plot(totalEnergy, 'p-')
+    # plt.savefig('fig.png')
 
 def simplewhere(v, r, params):
     """simple implementation of a where function. It always chooses
@@ -62,7 +73,7 @@ def simplewhere(v, r, params):
     #rnew is spiderman's position in terms of the web
     rnew = np.array([0,-10,-10], dtype=np.float)
     rnew[0] = (r[0] - params.streetWidth if not params.left else r[0])
-    return rnew, la.norm(rnew) * 0.84
+    return rnew, la.norm(rnew) * params.extension
 
 def simplewhen(vec, params):
     r, v = vec[:3], vec[3:]
@@ -75,5 +86,31 @@ def simplewhen(vec, params):
     else:
         return True
 
+def potentialLossFunction(k, extension):
+    return websling(np.array([12,0,0]),np.array([0,0,10]), simplewhere, simplewhen, 10, k, extension)
+
+def manualPhasePlot(function, ranges, granularities):
+    xSpan = ranges[0][1]-ranges[0][0]
+    ySpan = ranges[1][1] - ranges[1][0]
+    xTrend = int(xSpan/granularities[0])
+    yTrend = int(ySpan/granularities[1])
+    fullPhasePlot = []
+    for y in range(0,yTrend):
+        currentRow = []
+        usefulY = ranges[1][0] + y*granularities[1]
+        for x in range(0,xTrend):
+            usefulX = ranges[0][0]+x*granularities[0]
+            currentRow.append(function(usefulX,usefulY))
+        fullPhasePlot.append(currentRow)
+    fullPhasePlot = np.array(fullPhasePlot)
+    #Normalizing
+    maximum = np.max(fullPhasePlot)
+    minimum = np.min(fullPhasePlot)
+    fullPhasePlot -= minimum
+    fullPhasePlot *= 255*(minimum/maximum)
+    im = Image.fromarray(fullPhasePlot,'I;16')
+    im.save("phasePlot.JPG")
+
 if __name__ == '__main__':
-    websling(np.array([12,0,0]),np.array([0,0,10]), simplewhere, simplewhen, 10)
+    #websling(np.array([12,0,0]),np.array([0,0,10]), simplewhere, simplewhen, 10)
+    manualPhasePlot(potentialLossFunction, np.array([[1000,5000],[0.6,0.9]]), np.array([100,0.075]))
