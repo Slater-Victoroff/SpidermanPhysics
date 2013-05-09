@@ -80,7 +80,9 @@ def simplewhen(vec, params):
         return True
 
 def potentialLossFunction(k, extension):
-    return websling(np.array([12,0,0]),np.array([0,0,10]), simplewhere, simplewhen, 10, k, extension)
+    rGlobal, v0, energyTracker, t = websling(np.array([12,0,0]),np.array([0,0,10]), simplewhere, simplewhen, 50, k, extension)
+    potentialLoss = (energyTracker[0][1] - energyTracker[-1][1])/len(energyTracker)
+    return potentialLoss
 
 def manualPhasePlot(function, ranges, granularities):
     xSpan = ranges[0][1]-ranges[0][0]
@@ -93,27 +95,29 @@ def manualPhasePlot(function, ranges, granularities):
         usefulY = ranges[1][0] + y*granularities[1]
         for x in range(0,xTrend):
             usefulX = ranges[0][0]+x*granularities[0]
+            print usefulX, usefulY
             currentRow.append(function(usefulX,usefulY))
         fullPhasePlot.append(currentRow)
     fullPhasePlot = np.array(fullPhasePlot)
+    print fullPhasePlot
     #Normalizing
     maximum = np.max(fullPhasePlot)
     minimum = np.min(fullPhasePlot)
     fullPhasePlot -= minimum
     fullPhasePlot *= 255*(minimum/maximum)
-    im = Image.fromarray(fullPhasePlot,'I;16')
-    im.save("phasePlot.JPG")
+    im = Image.fromarray(fullPhasePlot,'L')
+    im.save("phasePlot.png")
 
 if __name__ == '__main__':
-    statify=False
-    if statify:
-        pr = cProfile.Profile()
-        pr.enable()
+    #statify=False
+    #if statify:
+    #    pr = cProfile.Profile()
+    #    pr.enable()
 
-    rGlobal, v0, E, t = websling(np.array([12,0,0]),np.array([0,0,10]), simplewhere, simplewhen, 10, vis=False)
-    print 'vavg = %f m/s' %(rGlobal[2][-1]/t)
+    #rGlobal, v0, E, t = websling(np.array([12,0,0]),np.array([0,0,10]), simplewhere, simplewhen, 10, vis=False)
+    #print 'vavg = %f m/s' %(rGlobal[2][-1]/t)
     #websling(np.array([12,0,0]),np.array([0,0,10]), simplewhere, simplewhen, 10)
-    #manualPhasePlot(potentialLossFunction, np.array([[1000,5000],[0.6,0.9]]), np.array([100,0.075]))
-    if statify:
-        pr.disable()
-        pstats.Stats(pr).print_stats()
+    manualPhasePlot(potentialLossFunction, np.array([[1000,5000],[0.6,0.9]]), np.array([100,0.0075]))
+    #if statify:
+    #    pr.disable()
+    #    pstats.Stats(pr).print_stats()
