@@ -44,16 +44,14 @@ def switchingSpring(t, v, parameters, slingingRule, vis=False):
     sim.set_initial_value(v,t)
     while sim.successful():
         if vis: rate(100)
-        try:
+        if (slingingRule(sim.y, parameters)):
             sim.integrate(sim.t+parameters.dt)
             visualize(sim.y, parameters)
-        except Exception as finish:
-            return finish.args
+        else:
+            return sim.t, sim.y
 
 
 def switchingIteration(t, v, parameters, slingingRule):
-    if (not slingingRule(v, parameters)):
-        raise Exception(t, v)
     r = v[0:3]
     velocity = v[3:]
     drdt = velocity
@@ -87,6 +85,7 @@ def minimizeWebEnergyLost(x, parameters):
     #return costFunction
     minimum = minimize(costFunction, (pi/4, 100), method="SLSQP", bounds=bounds, constraints=cons)
     return minimum
+
 #A function that will update the vpython sim
 def visualize(vals, parameters):
     """Updates the vpython sim with current values"""
