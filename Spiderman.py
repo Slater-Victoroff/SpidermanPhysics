@@ -216,7 +216,7 @@ if __name__ == '__main__':
     granularity = 20
     for change in range (0,100):
         print change
-        potentialChanges.append(lossFunction(params,(300+change*25), 0.84))
+        potentialChanges.append(lossFunction(params,1500, 0.7+(change*0.003)))
     plt.plot(potentialChanges)
     plt.show()
     #plotify(k=362.5, extension=0.90, plot=True, filename='fig4.png')
