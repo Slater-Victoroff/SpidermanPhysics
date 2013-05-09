@@ -5,6 +5,9 @@ import ThreeDsim
 import cProfile, pstats, io
 from PIL import Image
 
+import json
+
+
 """Worth noting that x is distance along the width of the street,
 y is vertical, and z is distance along the length of the street."""
 class Params(object):
@@ -32,7 +35,27 @@ def goGetEmTiger():
     The  Green Goblin"""
     print 'Damn you, Norman Osborn!'
 
-def websling(r0, v0, where, when, iterations, k=1000, extension = 0.84, vis=False):
+def simplewhere(v, r, params):
+    """simple implementation of a where function. It always chooses
+    to shoot 10m forward and 10m up, and sends out 1.1 times the
+    radius of web."""
+    #rnew is spiderman's position in terms of the web
+    rnew = np.array([0,-10,-10], dtype=np.float)
+    rnew[0] = (r[0] - params.streetWidth if not params.left else r[0])
+    return rnew, la.norm(rnew) * params.extension
+
+def simplewhen(vec, params):
+    r, v = vec[:3], vec[3:]
+    if params.left:
+        ang = np.arctan(r[2]/r[0])
+    else:
+        ang = np.arctan(r[2]/(-r[0]))
+    if ang > (np.pi / 20):
+        return False
+    else:
+        return True
+
+def websling(r0=np.array([12,0,0]), v0=np.array([0,0,10]), where=simplewhere, when=simplewhen, iterations=50, k=1000, extension = 0.84, vis=False):
     """Simulates Spiderman's webslinging for the given parameters"""
     params = Params(k=k, extension=extension)
     # the where function takes a position and velocity in global space
@@ -59,26 +82,6 @@ def websling(r0, v0, where, when, iterations, k=1000, extension = 0.84, vis=Fals
     # plt.savefig('fig.png')
     return rGlobal, v0, params.energyTracker, t
 
-def simplewhere(v, r, params):
-    """simple implementation of a where function. It always chooses
-    to shoot 10m forward and 10m up, and sends out 1.1 times the
-    radius of web."""
-    #rnew is spiderman's position in terms of the web
-    rnew = np.array([0,-10,-10], dtype=np.float)
-    rnew[0] = (r[0] - params.streetWidth if not params.left else r[0])
-    return rnew, la.norm(rnew) * params.extension
-
-def simplewhen(vec, params):
-    r, v = vec[:3], vec[3:]
-    if params.left:
-        ang = np.arctan(r[2]/r[0])
-    else:
-        ang = np.arctan(r[2]/(-r[0]))
-    if ang > (np.pi / 20):
-        return False
-    else:
-        return True
-
 def potentialLossFunction(k, extension):
     rGlobal, v0, energyTracker, t = websling(np.array([12,0,0]),np.array([0,0,10]), simplewhere, simplewhen, 50, k, extension)
     potentialLoss = (energyTracker[0][1] - energyTracker[-1][1])/len(energyTracker)
@@ -97,7 +100,7 @@ def manualPhasePlot(function, ranges, granularities):
             usefulX = ranges[0][0]+x*granularities[0]
             print usefulX, usefulY
             currentRow.append(function(usefulX,usefulY))
-        fullPhasePlot.append(currentRow)
+        fullPhasePlot.ap;pend(currentRow)
     fullPhasePlot = np.array(fullPhasePlot)
     print fullPhasePlot
     #Normalizing
@@ -108,12 +111,29 @@ def manualPhasePlot(function, ranges, granularities):
     im = Image.fromarray(fullPhasePlot,'L')
     im.save("phasePlot.png")
 
+def cramAwayAllData(function, ranges, granularities):
+    xSpan = ranges[0][1]-ranges[0][0]
+    ySpan = ranges[1][1] - ranges[1][0]
+    xTrend = int(xSpan/granularities[0])
+    yTrend = int(ySpan/granularities[1])
+    fullPhasePlot = []
+    for y in range(0,yTrend):
+        currentRow = []
+        usefulY = ranges[1][0] + y*granularities[1]
+        for x in range(0,xTrend):
+            usefulX = ranges[0][0]+x*granularities[0]
+            currentRow.append(function(k=usefulX,extension=usefulY))
+        fullPhasePlot.append(currentRow)
+    with open("JSONDUMP.json", 'wb') as jsonData:
+        pickle.dump(fullPhasePlot,jsonData)
+
 if __name__ == '__main__':
-    statify=True
-    if statify:
-        pr = cProfile.Profile()
-        pr.enable()
+    #statify=True
+    #if statify:
+    #    pr = cProfile.Profile()
+    #    pr.enable()
     manualPhasePlot(potentialLossFunction, np.array([[1000,5000],[0.6,0.9]]), np.array([100,0.0075]))
-    if statify:
-        pr.disable()
-        pstats.Stats(pr).print_stats()
+    #cramAwayAllData(websling, np.array([[1000,5000],[0.6,0.9]]), np.array([100,0.0075]))
+    #if statify:
+    #    pr.disable()
+    #    pstats.Stats(pr).print_stats()

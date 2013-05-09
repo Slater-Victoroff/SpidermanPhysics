@@ -66,7 +66,7 @@ def switchingIteration(t, v, parameters, slingingRule):
 
 def dragVector(velocity, parameters):
     dragParameter = lambda x: 0.5*parameters.airDensity*(x**2)*parameters.dragCoefficient*parameters.area
-    drag = np.array([(dragParameter(direction)/parameters.mass) for direction in velocity])
+    drag = np.array([(dragParameter(direction)) for direction in velocity])
     return drag
 
 def minimizeWebEnergyLost(x, parameters):
