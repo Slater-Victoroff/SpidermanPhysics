@@ -109,15 +109,11 @@ def manualPhasePlot(function, ranges, granularities):
     im.save("phasePlot.png")
 
 if __name__ == '__main__':
-    #statify=False
-    #if statify:
-    #    pr = cProfile.Profile()
-    #    pr.enable()
-
-    #rGlobal, v0, E, t = websling(np.array([12,0,0]),np.array([0,0,10]), simplewhere, simplewhen, 10, vis=False)
-    #print 'vavg = %f m/s' %(rGlobal[2][-1]/t)
-    #websling(np.array([12,0,0]),np.array([0,0,10]), simplewhere, simplewhen, 10)
+    statify=True
+    if statify:
+        pr = cProfile.Profile()
+        pr.enable()
     manualPhasePlot(potentialLossFunction, np.array([[1000,5000],[0.6,0.9]]), np.array([100,0.0075]))
-    #if statify:
-    #    pr.disable()
-    #    pstats.Stats(pr).print_stats()
+    if statify:
+        pr.disable()
+        pstats.Stats(pr).print_stats()
