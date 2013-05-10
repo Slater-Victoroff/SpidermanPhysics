@@ -27,6 +27,7 @@ class Params(object):
         self.energyTracker = []
         self.kinetic = []
         self.potential = []
+        self.energyBuffer = 10
 
 def energyCalculator(velocity, r, parameters):
     kinetic = 0.5*parameters.mass*(la.norm(velocity)**2)
@@ -62,7 +63,7 @@ def simplewhen(vec, params):
 
 def eqwhen(vec, params):
     r, v = vec[:3], vec[3:]
-    return energyCalculator(v,r, params)[3] > params.initialEnergy
+    return np.sum(energyCalculator(v,r, params)[:2])>=params.initialEnergy
 
 def websling(r0=np.array([12,0,0]), v0=np.array([0,0,10]), where=simplewhere, when=simplewhen, iterations=50, k=1000, extension = 0.84, vis=False, plot=False):
     """Simulates Spiderman's webslinging for the given parameters"""
@@ -78,7 +79,7 @@ def websling(r0=np.array([12,0,0]), v0=np.array([0,0,10]), where=simplewhere, wh
     (r0new, l) = where(v0[-1], rGlobal[-1], params)
     r0.append(r0new)
     params.equilibriumLength = la.norm(r0[-1])
-    params.initialEnergy = energyCalculator(v0[-1],r0[-1],params)[3]
+    params.initialEnergy = np.sum(energyCalculator(v0[-1],r0[-1],params)[:2])
     for i in xrange(0, iterations):
         params.equilibriumLength = l
         t, outvec = ThreeDsim.switchingSpring(
@@ -86,7 +87,7 @@ def websling(r0=np.array([12,0,0]), v0=np.array([0,0,10]), where=simplewhere, wh
         rf, v0new = outvec[:3], outvec[3:]
         v0.append(v0new)
         rGlobal.append(rGlobal[i] - r0[i] + rf)
-        params.initialEnergy = energyCalculator(v0[-1],r0[-1],params)[3]
+        params.initialEnergy = np.sum(energyCalculator(v0[-1],r0[-1],params)[:2])
         params.left = not params.left
         (r0new, l) = where(v0[i], rGlobal[i], params)
         r0.append(r0new)
@@ -114,7 +115,6 @@ def singleIter(r0=np.array([-12,-10,-10]), v0=np.array([0,0,10]), params=Params(
 def plotify(r0=np.array([-12,-10,-10]), v0=np.array([0,0,10]), plot=True, k=1000, extension=0.84, filename='fig.png'):
     """Simulates Spiderman's webslinging for the given parameters"""
     params = Params(k=k, extension=extension)
-    print params.extension
     v0, rf, energy, t = singleIter(r0,v0, params, eqwhen, vis=False)
     if plot:
         plt.plot(energy)
@@ -144,9 +144,9 @@ def searchFor(condition, ranges, granularities, r0=[-12,-10,-10], v0=np.array([0
 def lowDU(stats, r0, v0):
     return abs(r0[1] - stats[0][1]) < 0.001
 
-def lossFunction(params, k, extension):
+def lossFunction(params, equilLength, k):
     params.k = k
-    params.extension = extension
+    params.extension = equilLength
     rGlobal, v0, energyTracker, t = singleIter(params=params)
     potentialLoss = (energyTracker[0][1] - energyTracker[-1][1])/len(energyTracker)
     return potentialLoss, t
@@ -156,7 +156,10 @@ def normalize(array):
     maximum = np.max(array)
     minimum = np.min(array)
     array -= minimum
-    array *= 255*(minimum/maximum)
+    array *= 255*(minimum/float(maximum))
+    print "Array: " + str(array)
+    print "Maximum: " + str(maximum)
+    print "Minimum: " + str(minimum)
 
 def manualPhasePlot(function, ranges, granularities):
     params = Params()
@@ -211,16 +214,16 @@ if __name__ == '__main__':
     #rGlobal, v0, E, t = websling(np.array([12,0,0]),np.array([0,0,10]), simplewhere, eqwhen, 10, vis=True, plot=True)
     #rGlobal, v0, E, t = plotify(plot=True)
     #print searchFor(lowDU, np.array([[500,2000],[0.8,1.0]]), np.array([37.5,.005]))
-    params=Params()
-    potentialChanges = []
-    granularity = 20
-    for change in range (0,100):
-        print change
-        potentialChanges.append(lossFunction(params,1500, 0.7+(change*0.003)))
-    plt.plot(potentialChanges)
-    plt.show()
-    #plotify(k=362.5, extension=0.90, plot=True, filename='fig4.png')
-    #manualPhasePlot(lossFunction, np.array([[500,2000],[0.8,1.0]]), np.array([37.5,.005]))
+    #params=Params()
+    #potentialChanges = []
+    #granularity = 20
+    #for change in range (0,100):
+    #    print change
+    #    potentialChanges.append(lossFunction(params,(300+change*25), 0.84))
+    #plt.plot(potentialChanges)
+    #plt.show()
+    #plotify(k=1362.5, extension=0.80, plot=True, filename='fig4.png')
+    manualPhasePlot(lossFunction, np.array([[500,3000],[0.7,1.0]]), np.array([62.5,0.0075]))
     #cramAwayAllData(websling, np.array([[1000,5000],[0.6,0.9]]), np.array([37,5.0075]))
     if statify:
         pr.disable()
